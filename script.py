@@ -5,17 +5,17 @@ import time, sys
 def main():
   compute = googleapiclient.discovery.build('compute', 'v1')
   project = "reechar-delete-network"
-  network = "testvpc2"
-  deleteNetwork(compute,project, network)
+  network = "default"
+  deleteNetwork(compute, project, network)
 
 def deleteNetwork(compute, project, network):
-  firewalls = getFirewalls(compute,project,network)
+  firewalls = getFirewalls(compute, project, network)
   operations = deleteFirewalls(compute, project, firewalls)
   success = waitForOperations(compute, project, operations)
   if success:
     print "Attempting to delete VPC: " + network
     operation = compute.networks().delete(project=project, network=network).execute()
-    deleted = waitForOperations(compute,project, [operation["name"]])
+    deleted = waitForOperations(compute, project, [operation["name"]])
     if deleted:
       print "Deleted VPC: " + network
   else:
@@ -56,7 +56,7 @@ def waitForOperations(compute, project, operations):
      + " to complete" + "."*dotCounter +"   ")
     sys.stdout.flush()
     operation = operationsToCheck.pop()
-    result = compute.globalOperations().get(project=project,operation=operation).execute()
+    result = compute.globalOperations().get(project=project, operation=operation).execute()
     if result['status'] != 'DONE':
       operationsToCheck.append(operation)
     time.sleep(1)
